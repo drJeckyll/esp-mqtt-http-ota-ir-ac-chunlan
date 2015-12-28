@@ -74,6 +74,6 @@ temp: 15-30
 fan: 1/2/3/auto
 swing: on/off
 
-This code was tested with ESP SDK 0.9.3.
+This code was tested with esp-open-sdk (SDK 1.4.0). Flash size 2MB (16Mbit) or more.
 
 Schematics is something like: http://alexba.in/blog/2013/06/08/open-source-universal-remote-parts-and-pictures/
