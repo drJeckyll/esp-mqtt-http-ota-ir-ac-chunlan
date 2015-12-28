@@ -2,7 +2,7 @@
 
 This is same as https://github.com/drJeckyll/esp-mqtt-http-ir-ac-chunlan, but was ported to use rBoot and have OTA updates.
 
-There also two new topics /office/service/ac/restart and /office/service/ac/update. If you send something to 'restart' esp8266 will restart. If you send something to 'update' OTA update will be performed.
+There also two new topics /office/service/ac/restart and /office/service/ac/update. If you send something to 'restart' esp8266 will restart. If you send something to 'update' OTA update will be performed (see bellow for more information).
 
 Settings for WIFI, MQTT and OTA are in Makefile, or you can set them via env:
 
@@ -74,6 +74,32 @@ temp: 15-30
 fan: 1/2/3/auto
 swing: on/off
 
-This code was tested with esp-open-sdk (SDK 1.4.0). Flash size 2MB (16Mbit) or more.
-
 Schematics is something like: http://alexba.in/blog/2013/06/08/open-source-universal-remote-parts-and-pictures/
+
+To reboot ESP8266 just send something to MQTT_PREFIX"restart".
+
+To perform OTA update, first compile rom0.bin and rom1.bin. Put them on web server which can be accessed by http://OTA_HOST:OTA_PORT/OTA_PATH. For example:
+```
+OTA_HOST="192.168.1.1"
+OTA_PORT=80
+OTA_PATH="/firmware/"
+```
+For web server root use "/". Always put trailing slash!
+
+Then just send someting to MQTT_PREFIX"update". After 10-15 seconds update will be done. 
+
+There is no version control of bin files. Update is performed every time no matter if it is old ot new bin file.
+
+If you use BOOT_CONFIG_CHKSUM and BOOT_IROM_CHKSUM (and you should - see warning bellow) and update failed device will return with old bin. You can check which bin is loaded by check settings and see rom:0 (for example). After update succes it will be rom:1. Else it will be rom:0 again, so you must perform update again.
+
+You need:
+* rboot boot loader: https://github.com/raburton/rboot
+* esptool2: https://github.com/raburton/esptool2
+
+**WARNING:** rboot must be compiled with BOOT_CONFIG_CHKSUM and BOOT_IROM_CHKSUM in rboot.h or it will not boot.
+
+You can remove -iromchksum from FW_USER_ARGS in Makefile and use default settings but OTA update will be unrealible - corrupt roms & etc.
+
+If BOOT_CONFIG_CHKSUM and BOOT_IROM_CHKSUM are enabled then rBoot wi-iromchksumll recover from last booted rom and OTA update is much more stable.
+
+This code was tested with esp-open-sdk (SDK 1.4.0). Flash size 1MB (8Mbit) or more.
