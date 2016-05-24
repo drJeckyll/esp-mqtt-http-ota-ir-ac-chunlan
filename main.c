@@ -33,6 +33,14 @@ void ICACHE_FLASH_ATTR wifiConnectCb(uint8_t status)
 	}
 }
 
+void ICACHE_FLASH_ATTR mqttPublishSettings(temp_humid) {
+	char buff[200] = "";
+	
+	ac_get_settings(buff, temp_humid);
+	MQTT_Publish(&mqttClient, MQTT_TOPIC_SETTINGS, buff, os_strlen(buff), 0, 0);
+	INFO("MQTT send topic: %s, data: %s \r\n", MQTT_TOPIC_SETTINGS, buff);
+}
+
 void ICACHE_FLASH_ATTR mqttConnectedCb(uint32_t *args)
 {
 	MQTT_Client* client = (MQTT_Client*)args;
@@ -42,6 +50,8 @@ void ICACHE_FLASH_ATTR mqttConnectedCb(uint32_t *args)
 	MQTT_Subscribe(client, MQTT_TOPIC_SETTINGS, 0);
 	MQTT_Subscribe(client, MQTT_TOPIC_UPDATE, 0);
 	MQTT_Subscribe(client, MQTT_TOPIC_RESTART, 0);
+
+	mqttPublishSettings(args);
 }
 
 void ICACHE_FLASH_ATTR mqttDisconnectedCb(uint32_t *args)
@@ -54,14 +64,6 @@ void ICACHE_FLASH_ATTR mqttPublishedCb(uint32_t *args)
 {
 	MQTT_Client* client = (MQTT_Client*)args;
 	INFO("MQTT: Published\r\n");
-}
-
-void ICACHE_FLASH_ATTR mqttPublishSettings(temp_humid) {
-	char buff[200] = "";
-	
-	ac_get_settings(buff, temp_humid);
-	MQTT_Publish(&mqttClient, MQTT_TOPIC_SETTINGS, buff, os_strlen(buff), 0, 0);
-	INFO("MQTT send topic: %s, data: %s \r\n", MQTT_TOPIC_SETTINGS, buff);
 }
 
 void ICACHE_FLASH_ATTR mqttDataCb(uint32_t *args, const char* topic, uint32_t topic_len, const char *data, uint32_t data_len)
