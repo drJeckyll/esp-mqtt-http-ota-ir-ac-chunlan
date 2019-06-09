@@ -1,3 +1,7 @@
+# THIS CODE IS OBSOLETE AND WILL NOT BE UPDATED ANYMORE
+Please use new repo here: https://git.jeckyll.net/published/personal/esp8266/esp-mqtt-http-ota-ir-ac-chunlan
+
+
 # esp-mqtt-http-ota-ir-ac-chunlan
 
 This is same as https://github.com/drJeckyll/esp-mqtt-http-ir-ac-chunlan, but was ported to use rBoot and have OTA updates.
